@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 Current_page = 1
-url = f"https://books.toscrape.com/catalogue/index.html"
+url = f"https://books.toscrape.com/index.html"
 another_url = f"https://books.toscrape.com/catalogue/category/books/historical-fiction_4/index.html"
 response = requests.get(url)
 soup = BeautifulSoup(response.text , "html.parser")
@@ -30,7 +30,7 @@ def counter(book_types):
         another_url = f"https://books.toscrape.com/catalogue/category/books/{book_types[index]}/{structure}.html"
         response = requests.get(url)
         soup = BeautifulSoup(response.text , "html.parser")
-        results = soup.find(class_="form-horizontal").text.strip().split(" ")[0]
+        results =int(soup.find(class_="form-horizontal").text.strip().split(" ")[0])
         pg_count = results // 20
         if results%20 != 0 :
             final = pg_count +1
@@ -42,12 +42,12 @@ def counter(book_types):
             if num < pg_count:
                 num+=1
         
-        preparing_dataframe(book_types[index])
+        d = preparing_(book_types[index])
+    print(d)
 
 book_types = nav_list_handler(soup)
 print(book_types)
 counter(book_types)
-        
 
     
 
@@ -57,7 +57,7 @@ def product_description(book):
     print(b_soup.find("p"))
 
 
-def preparing_dataframe(genre):
+def preparing_(genre):
     all_book = soup.find_all("li", class_="col-xs-6 col-sm-4 col-md-3 col-lg-3")
     book_details = []
     data = {}
@@ -76,6 +76,7 @@ def preparing_dataframe(genre):
         book_details.append(book_url)
 
         data[genre] = book_details
+    return data
     
     
 
